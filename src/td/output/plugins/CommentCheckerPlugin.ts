@@ -40,7 +40,7 @@ module td.output
                 if( model.kind !=td.models.ReflectionKind.ExternalModule && !(model.kind  & td.models.ReflectionKind.FunctionOrMethod ))
                 { 
                     if(!model.hasComment()){
-                       this.writeErrorMessage(Util.format("Identified element '%s'does not have comment.", model.name), model);
+                       this.writeErrorMessage(Util.format("Element '%s' does not have comment.", model.name), model);
                     }
                     else 
                     {
@@ -52,7 +52,7 @@ module td.output
                                 var parameter = (<td.models.SignatureReflection>model).parameters[id];
                                 if(!parameter.hasComment())
                                 {
-                                    this.writeErrorMessage(Util.format("Identified parameter '%s' does not have comment.", parameter.name), parameter);
+                                    this.writeErrorMessage(Util.format("Parameter '%s' does not have comment.", parameter.name), parameter);
                                 }
                             }
                         }
