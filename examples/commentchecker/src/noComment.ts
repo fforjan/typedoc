@@ -18,12 +18,12 @@ export interface ParamInvalid {
 	 * Empty comment
 	 * @param invalid this is an invalid
 	 */
-	 methodWithWrongParam(param :  boolean) : void;
+	 methodWithWrongParam(notheparam :  boolean) : void;
 	 
 	 /**
 	 * Empty comment
 	 */
-	 methodWithMissingParam(param :  boolean) : void;
+	 methodWithMissingParam(missingComment :  boolean) : void;
 	 
 	 /**
 	 * Empty comment

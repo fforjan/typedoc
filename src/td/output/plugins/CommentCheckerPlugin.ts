@@ -36,11 +36,11 @@ module td.output
             
             if(  !skip) {
                 
-                // only check for signature and other stuff
+                // only check for signature and other type
                 if( model.kind !=td.models.ReflectionKind.ExternalModule && !(model.kind  & td.models.ReflectionKind.FunctionOrMethod ))
                 { 
                     if(!model.hasComment()){
-                       this.writeErrorMessage("found element with no comment :", model);
+                       this.writeErrorMessage(Util.format("Identified element '%s'does not have comment.", model.name), model);
                     }
                     else 
                     {
@@ -52,7 +52,7 @@ module td.output
                                 var parameter = (<td.models.SignatureReflection>model).parameters[id];
                                 if(!parameter.hasComment())
                                 {
-                                    this.writeErrorMessage("found element with empty params", model);
+                                    this.writeErrorMessage(Util.format("Identified parameter '%s' does not have comment.", parameter.name), parameter);
                                 }
                             }
                         }
@@ -60,19 +60,33 @@ module td.output
                     
                 }
                 
-                
-                 model.traverse((item, type) => this.CheckComment(item));
+                //if it's a call signature, do not need to traverse it
+                if(!(model.kind & td.models.ReflectionKind.SomeSignature))
+                {
+                    model.traverse((item, type) => this.CheckComment(item));
+                }
             }
         }
         
         private writeErrorMessage(message: string, model: td.models.Reflection):void {
+            
+            var sourceModel : td.models.Reflection = model;
+            while (sourceModel.sources === undefined || sourceModel.sources.length === 0 )
+            {
+                sourceModel = sourceModel.parent;
+            }
+            
+            var source = sourceModel.sources[0];
+            
+            var formatedMesssage = Util.format('%s(%d,%d) : %s', source.fileName, source.line, source.character, message);
+            
             if(this.warningNotError)
             { 
-                this.renderer.application.logger.warn(message , model.getFullName());
+                this.renderer.application.logger.warn(formatedMesssage);
             }
             else
             {
-                this.renderer.application.logger.error(message , model.getFullName());;
+                this.renderer.application.logger.error(formatedMesssage);
             }
         }
     }
