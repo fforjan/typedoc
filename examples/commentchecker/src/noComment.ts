@@ -1,4 +1,4 @@
-export interface INameInterfaceWithNoComment {
+export interface ExportedInterfaceWithNoComment {
 	
 	methodWithNoComment(): void;
 	
@@ -8,6 +8,7 @@ export interface INameInterfaceWithNoComment {
 interface PrivateInterfaceWithNoComment {
 	methodWithNoCommentInPrivateInterface(): void;
 }
+
 /**
  * Contains error for invalid tags
  */
@@ -30,12 +31,14 @@ export interface ParamInvalid {
 	 * @param invalid this is an invalid
 	 * @param invalid this is an invalid
 	 */
-	 methodWithDeplicatedParam(param :  boolean) : void;
+	 methodWithDeplicatedParam(invalid :  boolean) : void;
 }
+
 /**
  * this is a random comment on the interface
  */
 export class INameInterfaceWithComment {
+
 	/**
      * Constructor short text.
      *
@@ -43,9 +46,8 @@ export class INameInterfaceWithComment {
      * @param p2 Private string property
      * @param p3 Public number property
      * @param p4 Public implicit any property
-	 * @return pas grand chose
      */
-    constructor(p1, protected p2, public p3:number, private p4:number) {
+    public constructor(p1, protected p2, public p3:number, private p4:number) {
     }
 	
 	/**
@@ -66,14 +68,13 @@ export class INameInterfaceWithComment {
 	/**
 	 * field with comment
 	 */
-	fieldWithoutComment: number;
+	fieldWithComment: number;
 	
 	/**
 	 * Correct methods
 	 * 
 	 * @param param1 first parameters.
 	 * @param param2 second parameters
-	 * @see moi kjjllj
 	 */
 	methodWithCorrectParams(param1: boolean, param2: boolean):void{}
 }
