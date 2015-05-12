@@ -12,14 +12,14 @@ module td.output
          */
         constructor(renderer:Renderer) {
             super(renderer);
-            renderer.on(Renderer.EVENT_BEGIN, this.onRendererBeginPage, this);
+            renderer.on(Renderer.EVENT_BEGIN, this.onRendererBegin, this);
         }
 
         /**
          * Trigger when the rendering is starting.
          * This will traverse the full document.
          */
-        private onRendererBeginPage(event:OutputEvent) {
+        private onRendererBegin(event:OutputEvent) {
             event.project.traverse((item, type) => this.CheckComment(item));
         }
         
