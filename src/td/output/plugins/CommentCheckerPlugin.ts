@@ -34,7 +34,7 @@ module td.output
             // then skip
             var skip = (model.kind & td.models.ReflectionKind.ClassOrInterface) &&  (model.flags.isPrivate || !( model.flags.isPublic || model.flags.isExported));
             
-            if(  !skip) {
+            if(!skip) {
                 
                 // only check for signature and other type
                 if( model.kind !=td.models.ReflectionKind.ExternalModule && !(model.kind  & td.models.ReflectionKind.FunctionOrMethod ))
@@ -47,7 +47,6 @@ module td.output
                         //check for invalid tags
                         if(model.kind & td.models.ReflectionKind.SomeSignature) {
                             
-                            var parameters = [];
                             for(var id in (<td.models.SignatureReflection>model).parameters) {
                                 var parameter = (<td.models.SignatureReflection>model).parameters[id];
                                 if(!parameter.hasComment())
