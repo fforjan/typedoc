@@ -48,7 +48,7 @@ function compareDirectories(a, b) {
 
 describe('Renderer', function() {
     var src = Path.join(__dirname, '..', 'examples', 'basic', 'src');
-    var out = Path.join(__dirname, '..', 'tmp', 'test');
+    var out = Path.join(__dirname, '..', 'tmp', 'test', 'renderer');
     var app, project;
 
     before(function() {
