@@ -34,8 +34,6 @@
 			"taskName": "specs",
 			// Make this the default build command.
 			"isTestCommand": true,
-			// Show the output window only if unrecognized errors occur.
-			"showOutput": "silent",
 			// Use the standard less compilation problem matcher.
 			"problemMatcher": "$lessCompile"
 		},
@@ -43,8 +41,6 @@
 			"taskName": "default",
 			// Make this the default build command.
 			"isBuildCommand": true,
-			// Show the output window only if unrecognized errors occur.
-			"showOutput": "silent",
 			// Use the standard less compilation problem matcher.
 			"problemMatcher": "$lessCompile"
 		}
