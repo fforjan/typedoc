@@ -30,7 +30,10 @@ module td
          */
         errorCount:number = 0;
 
-
+        /**
+         * How many error messages have been logged?
+         */
+        warningCount:number = 0;
 
         /**
          * Has an error been raised through the log method?
@@ -167,6 +170,10 @@ module td
             if (level == LogLevel.Error) {
                 this.errorCount += 1;
             }
+            
+            if (level == LogLevel.Warn) {
+                this.warningCount += 1;
+            }
 
             var output = '';
             if (level == LogLevel.Error) output += 'Error: ';
@@ -213,6 +220,10 @@ module td
         public log(message:string, level:LogLevel = LogLevel.Info, newLine?:boolean) {
             if (level == LogLevel.Error) {
                 this.errorCount += 1;
+            }
+            
+            if (level == LogLevel.Warn) {
+                this.warningCount += 1;
             }
 
             this.callback(message, level, newLine);
