@@ -1,3 +1,6 @@
+// <reference path="../../models/refelection.ts" />
+// <reference path="../RendererPlugin.ts" />
+
 module td.output
 {
     export class CommentCheckerPlugin extends RendererPlugin
@@ -28,11 +31,15 @@ module td.output
          */
         private CheckComment(model:td.models.Reflection) {
            
-            // if it's a class or interface and this is
+            // if it's 
+            // - a class/interface
+            // - a function/method
+            // and this is
             // - private
             // - non public or non private
             // then skip
-            var skip = (model.kind & td.models.ReflectionKind.ClassOrInterface) &&  (model.flags.isPrivate || !( model.flags.isPublic || model.flags.isExported));
+            var skip = ((model.kind & td.models.ReflectionKind.ClassOrInterface) || (model.kind & td.models.ReflectionKind.FunctionOrMethod) ) 
+                    &&  (model.flags.isPrivate || !( model.flags.isPublic || model.flags.isExported));
             
             if(!skip) {
                 
@@ -42,28 +49,46 @@ module td.output
                     if(!model.hasComment()){
                        this.writeErrorMessage(Util.format("Element '%s' does not have comment.", model.name), model);
                     }
-                    else 
+                    else
                     {
-                        //check for invalid tags
-                        if(model.kind & td.models.ReflectionKind.SomeSignature) {
+                        // if we got a call signature, check for the return type if it's not and not void
+                        if(model.kind & td.models.ReflectionKind.SomeSignature)
+                         {  
+                            var declarationModel = <td.models.DeclarationReflection>model;
+                        
+                            var signatureWithReturnType = 
+                                td.models.ReflectionKind.CallSignature | td.models.ReflectionKind.IndexSignature | td.models.ReflectionKind.GetSignature; 
+                            var signatureWithNoReturnType = td.models.ReflectionKind.ConstructorSignature |td.models.ReflectionKind.SetSignature;
+                        
                             
-                            for(var id in (<td.models.SignatureReflection>model).parameters) {
-                                var parameter = (<td.models.SignatureReflection>model).parameters[id];
-                                if(!parameter.hasComment())
-                                {
-                                    this.writeErrorMessage(Util.format("Parameter '%s' does not have comment.", parameter.name), parameter);
-                                }
+                            // so if a return type is needed and defined
+                            if(( model.kind & signatureWithReturnType) != 0 
+                                && (declarationModel.type !== undefined)  
+                                && (declarationModel.type.toString() !== "void")
+                                && !!!declarationModel.comment.returns)
+                            {
+                                this.writeErrorMessage(Util.format("Element '%s' does not have return tag.", model.name), model);
+                            }
+                            
+                            // so if a return type is possible but not defined
+                            if(( model.kind & signatureWithReturnType) != 0 
+                                && (declarationModel.type === undefined  
+                                || (declarationModel.type.toString() === "void"))
+                                && !!declarationModel.comment.returns)
+                            {
+                                 this.writeErrorMessage(Util.format("Element '%s' does have a useless return tag.", model.name), model);
+                            }
+                            
+                            // so if a return type is needed and defined
+                            if(( model.kind & signatureWithNoReturnType) != 0 
+                                && !!declarationModel.comment.returns)
+                            {
+                                this.writeErrorMessage(Util.format("Element '%s' does have a useless return tag.", model.name), model);
                             }
                         }
                     }
-                    
                 }
-                
-                //if it's a call signature, do not need to traverse it
-                if(!(model.kind & td.models.ReflectionKind.SomeSignature))
-                {
-                    model.traverse((item, type) => this.CheckComment(item));
-                }
+                model.traverse((item, type) => this.CheckComment(item));
             }
         }
         

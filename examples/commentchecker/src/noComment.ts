@@ -46,6 +46,7 @@ export class INameInterfaceWithComment {
      * @param p2 Private string property
      * @param p3 Public number property
      * @param p4 Public implicit any property
+	 * @return useless
      */
     public constructor(p1, protected p2, public p3:number, private p4:number) {
     }
@@ -56,9 +57,12 @@ export class INameInterfaceWithComment {
      * It should be inherited by all subclasses.
      *
      * @param name The new name.
+	 * @return bla
      */
     public setName(name:string) {
     }
+	
+	private privateMethodWithNoComment():void {}
 	
 	/**
 	 * random comment on method
