@@ -272,6 +272,10 @@ declare module td {
          */
         errorCount: number;
         /**
+         * How many error messages have been logged?
+         */
+        warningCount: number;
+        /**
          * Has an error been raised through the log method?
          */
         hasErrors(): boolean;

@@ -564,6 +564,10 @@ var td;
              * How many error messages have been logged?
              */
             this.errorCount = 0;
+            /**
+             * How many error messages have been logged?
+             */
+            this.warningCount = 0;
         }
         /**
          * Has an error been raised through the log method?
@@ -709,6 +713,9 @@ var td;
             if (level == 2 /* Error */) {
                 this.errorCount += 1;
             }
+            if (level == 1 /* Warn */) {
+                this.warningCount += 1;
+            }
             var output = '';
             if (level == 2 /* Error */)
                 output += 'Error: ';
@@ -749,6 +756,9 @@ var td;
             if (level === void 0) { level = 0 /* Info */; }
             if (level == 2 /* Error */) {
                 this.errorCount += 1;
+            }
+            if (level == 1 /* Warn */) {
+                this.warningCount += 1;
             }
             this.callback(message, level, newLine);
         };
