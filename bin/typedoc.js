@@ -7086,6 +7086,102 @@ var td;
         output.Renderer.registerPlugin('assets', AssetsPlugin);
     })(output = td.output || (td.output = {}));
 })(td || (td = {}));
+// <reference path="../../models/refelection.ts" />
+// <reference path="../RendererPlugin.ts" />
+var td;
+(function (td) {
+    var output;
+    (function (output) {
+        var CommentCheckerPlugin = (function (_super) {
+            __extends(CommentCheckerPlugin, _super);
+            /**
+             * Create a new LayoutPlugin instance.
+             *
+             * @param renderer  The renderer this plugin should be attached to.
+             */
+            function CommentCheckerPlugin(renderer) {
+                _super.call(this, renderer);
+                // FIXME : this should be a setting
+                this.warningNotError = true;
+                renderer.on(output.Renderer.EVENT_BEGIN, this.onRendererBegin, this);
+            }
+            /**
+             * Trigger when the rendering is starting.
+             * This will traverse the full document.
+             */
+            CommentCheckerPlugin.prototype.onRendererBegin = function (event) {
+                var _this = this;
+                event.project.traverse(function (item, type) { return _this.CheckComment(item); });
+            };
+            /**
+             * Check for our rules on the current model
+             */
+            CommentCheckerPlugin.prototype.CheckComment = function (model) {
+                var _this = this;
+                // if it's 
+                // - a class/interface
+                // - a function/method
+                // and this is
+                // - private
+                // - non public or non private
+                // then skip
+                var skip = ((model.kind & td.models.ReflectionKind.ClassOrInterface) || (model.kind & td.models.ReflectionKind.FunctionOrMethod)) && (model.flags.isPrivate || !(model.flags.isPublic || model.flags.isExported));
+                if (!skip) {
+                    // only check for signature and other type
+                    if (model.kind != 1 /* ExternalModule */ && !(model.kind & td.models.ReflectionKind.FunctionOrMethod)) {
+                        if (!model.hasComment()) {
+                            this.writeErrorMessage(td.Util.format("Element '%s' does not have comment.", model.name), model);
+                        }
+                        else {
+                            this.CheckForReturnType(model);
+                        }
+                    }
+                    model.traverse(function (item, type) { return _this.CheckComment(item); });
+                }
+            };
+            CommentCheckerPlugin.prototype.CheckForReturnType = function (model) {
+                // if we got a call signature, check for the return type if it's not and not void
+                if (model.kind & td.models.ReflectionKind.SomeSignature) {
+                    var declarationModel = model;
+                    var signatureWithReturnType = 4096 /* CallSignature */ | 8192 /* IndexSignature */ | 524288 /* GetSignature */;
+                    var signatureWithNoReturnType = 16384 /* ConstructorSignature */ | 1048576 /* SetSignature */;
+                    // so if a return type is needed and defined
+                    if ((model.kind & signatureWithReturnType) != 0 && (declarationModel.type !== undefined) && (declarationModel.type.toString() !== "void") && !!!declarationModel.comment.returns) {
+                        this.writeErrorMessage(td.Util.format("Element '%s' does not have return tag.", model.name), model);
+                    }
+                    // so if a return type is possible but not defined
+                    if ((model.kind & signatureWithReturnType) != 0 && (declarationModel.type === undefined || (declarationModel.type.toString() === "void")) && !!declarationModel.comment.returns) {
+                        this.writeErrorMessage(td.Util.format("Element '%s' does have a useless return tag.", model.name), model);
+                    }
+                    // so if a return type is needed and defined
+                    if ((model.kind & signatureWithNoReturnType) != 0 && !!declarationModel.comment.returns) {
+                        this.writeErrorMessage(td.Util.format("Element '%s' does have a useless return tag.", model.name), model);
+                    }
+                }
+            };
+            CommentCheckerPlugin.prototype.writeErrorMessage = function (message, model) {
+                var sourceModel = model;
+                while (sourceModel.sources === undefined || sourceModel.sources.length === 0) {
+                    sourceModel = sourceModel.parent;
+                }
+                var source = sourceModel.sources[0];
+                var formatedMesssage = td.Util.format('%s(%d,%d) : %s', source.fileName, source.line, source.character, message);
+                if (this.warningNotError) {
+                    this.renderer.application.logger.warn(formatedMesssage);
+                }
+                else {
+                    this.renderer.application.logger.error(formatedMesssage);
+                }
+            };
+            return CommentCheckerPlugin;
+        })(output.RendererPlugin);
+        output.CommentCheckerPlugin = CommentCheckerPlugin;
+        /**
+         * Register this plugin.
+         */
+        output.Renderer.registerPlugin('CommentChecker', CommentCheckerPlugin);
+    })(output = td.output || (td.output = {}));
+})(td || (td = {}));
 var td;
 (function (td) {
     var output;

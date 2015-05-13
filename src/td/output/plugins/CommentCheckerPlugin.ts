@@ -51,44 +51,48 @@ module td.output
                     }
                     else
                     {
-                        // if we got a call signature, check for the return type if it's not and not void
-                        if(model.kind & td.models.ReflectionKind.SomeSignature)
-                         {  
-                            var declarationModel = <td.models.DeclarationReflection>model;
-                        
-                            var signatureWithReturnType = 
-                                td.models.ReflectionKind.CallSignature | td.models.ReflectionKind.IndexSignature | td.models.ReflectionKind.GetSignature; 
-                            var signatureWithNoReturnType = td.models.ReflectionKind.ConstructorSignature |td.models.ReflectionKind.SetSignature;
-                        
-                            
-                            // so if a return type is needed and defined
-                            if(( model.kind & signatureWithReturnType) != 0 
-                                && (declarationModel.type !== undefined)  
-                                && (declarationModel.type.toString() !== "void")
-                                && !!!declarationModel.comment.returns)
-                            {
-                                this.writeErrorMessage(Util.format("Element '%s' does not have return tag.", model.name), model);
-                            }
-                            
-                            // so if a return type is possible but not defined
-                            if(( model.kind & signatureWithReturnType) != 0 
-                                && (declarationModel.type === undefined  
-                                || (declarationModel.type.toString() === "void"))
-                                && !!declarationModel.comment.returns)
-                            {
-                                 this.writeErrorMessage(Util.format("Element '%s' does have a useless return tag.", model.name), model);
-                            }
-                            
-                            // so if a return type is needed and defined
-                            if(( model.kind & signatureWithNoReturnType) != 0 
-                                && !!declarationModel.comment.returns)
-                            {
-                                this.writeErrorMessage(Util.format("Element '%s' does have a useless return tag.", model.name), model);
-                            }
-                        }
+                        this.CheckForReturnType(model);
                     }
                 }
                 model.traverse((item, type) => this.CheckComment(item));
+            }
+        }
+        
+        private CheckForReturnType(model:td.models.Reflection) : void {
+            // if we got a call signature, check for the return type if it's not and not void
+            if(model.kind & td.models.ReflectionKind.SomeSignature)
+             {  
+                var declarationModel = <td.models.DeclarationReflection>model;
+            
+                var signatureWithReturnType = 
+                    td.models.ReflectionKind.CallSignature | td.models.ReflectionKind.IndexSignature | td.models.ReflectionKind.GetSignature; 
+                var signatureWithNoReturnType = td.models.ReflectionKind.ConstructorSignature |td.models.ReflectionKind.SetSignature;
+            
+                
+                // so if a return type is needed and defined
+                if(( model.kind & signatureWithReturnType) != 0 
+                    && (declarationModel.type !== undefined)  
+                    && (declarationModel.type.toString() !== "void")
+                    && !!!declarationModel.comment.returns)
+                {
+                    this.writeErrorMessage(Util.format("Element '%s' does not have return tag.", model.name), model);
+                }
+                
+                // so if a return type is possible but not defined
+                if(( model.kind & signatureWithReturnType) != 0 
+                    && (declarationModel.type === undefined  
+                    || (declarationModel.type.toString() === "void"))
+                    && !!declarationModel.comment.returns)
+                {
+                     this.writeErrorMessage(Util.format("Element '%s' does have a useless return tag.", model.name), model);
+                }
+                
+                // so if a return type is needed and defined
+                if(( model.kind & signatureWithNoReturnType) != 0 
+                    && !!declarationModel.comment.returns)
+                {
+                    this.writeErrorMessage(Util.format("Element '%s' does have a useless return tag.", model.name), model);
+                }
             }
         }
         

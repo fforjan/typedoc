@@ -24,6 +24,10 @@ module Module {
          * @return result
          */
         public div(n1: number, n2: number): number {
+            
+            ///kjkljkj
+            this.sum(n1, n2);
+            
             return n1 / n2;
         }
     }

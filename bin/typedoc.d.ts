@@ -3387,6 +3387,28 @@ declare module td.output {
     }
 }
 declare module td.output {
+    class CommentCheckerPlugin extends RendererPlugin {
+        private warningNotError;
+        /**
+         * Create a new LayoutPlugin instance.
+         *
+         * @param renderer  The renderer this plugin should be attached to.
+         */
+        constructor(renderer: Renderer);
+        /**
+         * Trigger when the rendering is starting.
+         * This will traverse the full document.
+         */
+        private onRendererBegin(event);
+        /**
+         * Check for our rules on the current model
+         */
+        private CheckComment(model);
+        private CheckForReturnType(model);
+        private writeErrorMessage(message, model);
+    }
+}
+declare module td.output {
     /**
      * A plugin that exports an index of the project to a javascript file.
      *
