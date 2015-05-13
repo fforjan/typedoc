@@ -31,7 +31,7 @@
 	
 	"tasks": [
 		{
-			"taskName": "specs",
+			"taskName": "test",
 			// Make this the default build command.
 			"isTestCommand": true,
 			// Use the standard less compilation problem matcher.
